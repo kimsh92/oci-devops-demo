@@ -16,7 +16,7 @@ steps:
     name: "Init exportedVariables"
     timeoutInSeconds: 4000
     command: |
-      APP_NAME=`grep '"name"' package.json | cut -d '"' -f 4 | head -n 1`
+      APP_NAME=$appName
 
   - type: Command
     name: "Build Source"
@@ -24,10 +24,10 @@ steps:
     failImmediatelyOnError: true
     command: |
       echo $PATH
-      mvn clean install
+      echo "=================== BUILD SOURCE ==================="
 
   - type: Command
-    name: "Define Image Tag - Commit ID"
+    name: "Define Image Tag"
     timeoutInSeconds: 30
     command: |
       COMMIT_ID=`echo ${OCI_TRIGGER_COMMIT_HASH} | cut -c 1-7`
@@ -35,15 +35,24 @@ steps:
       [ -z "$COMMIT_ID" ] && TAG=$BUILDRUN_HASH || TAG=$COMMIT_ID
       echo "COMMIT ID: " $COMMIT_ID
       echo "BUILDRUN_HASH: " $BUILDRUN_HASH
-
+  
   - type: Command
     name: "Define OCIR Path"
     timeoutInSeconds: 30
     command: |
       TENANCY_NAMESPACE=`oci os ns get --query data --raw-output`
-      REPO_NAME=$appName
+      REPO_NAME=$APP_NAME
       OCIR_PATH=$OCI_RESOURCE_PRINCIPAL_REGION.ocir.io/$TENANCY_NAMESPACE/$REPO_NAME
-
+      
+  - type: Command
+    timeoutInSeconds: 400
+    name: "Build Container Image"
+    command: |
+      cd ${OCI_PRIMARY_SOURCE_DIR}
+      docker build -t --pull --rm new-generated-image .
+      #docker images
+      echo $new-generated-image
+      
   - type: Command
     name: "Check exportedVariables"
     timeoutInSeconds: 30
@@ -54,3 +63,10 @@ steps:
       echo "APP_NAME: " $APP_NAME      
       echo "OCIR_PATH: " $OCIR_PATH
       echo "TAG: " $TAG
+
+outputArtifacts:
+  - name: output-image
+    type: DOCKER_IMAGE
+    # this location tag doesn't effect the tag used to deliver the container image
+    # to the Container Registry
+    location: new-generated-image
