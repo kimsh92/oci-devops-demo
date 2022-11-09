@@ -44,6 +44,7 @@ steps:
       COMMIT_ID=`echo ${OCI_TRIGGER_COMMIT_HASH} | cut -c 1-7`
       BUILDRUN_HASH=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-7`
       [ -z "$COMMIT_ID" ] && TAG=$BUILDRUN_HASH || TAG=$COMMIT_ID
+      
       echo "COMMIT ID: " $COMMIT_ID
       echo "BUILDRUN_HASH: " $BUILDRUN_HASH
   
@@ -60,10 +61,9 @@ steps:
     failImmediatelyOnError: true
     name: "Build Container Image"
     command: |
-      docker build --pull --rm -t new-generated-image .
-      #docker images
-      echo "IMAGE: " $new-generated-image
-
+      docker build --pull --rm -t $APP_NAME:$TAG .
+      docker images
+      
     onFailure:
       - type: Command
         timeoutInSeconds: 400
