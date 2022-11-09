@@ -59,7 +59,6 @@ steps:
     failImmediatelyOnError: true
     name: "Build Container Image"
     command: |
-      cd ${OCI_PRIMARY_SOURCE_DIR}
       docker build --pull --rm -t new-generated-image .
       #docker images
       echo "IMAGE: " $new-generated-image
