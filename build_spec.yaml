@@ -27,6 +27,7 @@ steps:
     command: |
       echo $PATH
       echo "=================== BUILD SOURCE ==================="
+      ls -al 
       
     onFailure:
       - type: Command
