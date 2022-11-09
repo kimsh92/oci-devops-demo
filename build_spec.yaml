@@ -10,6 +10,7 @@ env:
     - APP_NAME
     - OCIR_PATH
     - TAG
+    - BUILD_RESULT
 
 steps:
   - type: Command
@@ -17,7 +18,8 @@ steps:
     timeoutInSeconds: 4000
     command: |
       APP_NAME=$appName
-
+      BUILD_RESULT=TRUE
+      
   - type: Command
     name: "Build Source"
     timeoutInSeconds: 4000
@@ -25,6 +27,14 @@ steps:
     command: |
       echo $PATH
       echo "=================== BUILD SOURCE ==================="
+      
+    onFailure:
+      - type: Command
+        timeoutInSeconds: 400
+        command: |
+          echo "Handling Failure"
+          BUILD_RESULT=FAILURE
+          echo "Failure successfully handled"    
 
   - type: Command
     name: "Define Image Tag"
@@ -37,7 +47,7 @@ steps:
       echo "BUILDRUN_HASH: " $BUILDRUN_HASH
   
   - type: Command
-    name: "Define OCIR Path"
+    name: "Define Container Registry"
     timeoutInSeconds: 30
     command: |
       TENANCY_NAMESPACE=`oci os ns get --query data --raw-output`
@@ -46,13 +56,22 @@ steps:
       
   - type: Command
     timeoutInSeconds: 400
+    failImmediatelyOnError: true
     name: "Build Container Image"
     command: |
       cd ${OCI_PRIMARY_SOURCE_DIR}
-      docker build -t --pull --rm new-generated-image .
+      docker build --pull --rm -t new-generated-image .
       #docker images
-      echo $new-generated-image
-      
+      echo "IMAGE: " $new-generated-image
+
+    onFailure:
+      - type: Command
+        timeoutInSeconds: 400
+        command: |
+          echo "Handling Failure"
+          BUILD_RESULT=FAILURE
+          echo "Failure successfully handled" 
+          
   - type: Command
     name: "Check exportedVariables"
     timeoutInSeconds: 30
