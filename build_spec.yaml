@@ -62,8 +62,7 @@ steps:
     failImmediatelyOnError: true
     name: "Build Container Image"
     command: |
-      IMAGE_NAME=$APP_NAME:$TAG
-      docker build --pull --rm -t $IMAGE_NAME .
+      docker build --pull --rm -t devopsdemo-apps .
       docker images
       
     onFailure:
@@ -90,4 +89,4 @@ outputArtifacts:
     type: DOCKER_IMAGE
     # this location tag doesn't effect the tag used to deliver the container image
     # to the Container Registry
-    location: $IMAGE_NAME
+    location: devopsdemo-apps
