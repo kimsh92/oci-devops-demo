@@ -27,7 +27,7 @@ steps:
     command: |
       echo $PATH
       echo "=================== BUILD SOURCE ==================="
-      ls -al 
+      mvn package -Dmaven.test.skip
       
     onFailure:
       - type: Command
