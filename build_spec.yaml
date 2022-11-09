@@ -10,6 +10,7 @@ env:
     - APP_NAME
     - OCIR_PATH
     - TAG
+    - IMAGE_NAME
     - BUILD_RESULT
 
 steps:
@@ -61,7 +62,8 @@ steps:
     failImmediatelyOnError: true
     name: "Build Container Image"
     command: |
-      docker build --pull --rm -t $APP_NAME:$TAG .
+      IMAGE_NAME=$APP_NAME:$TAG
+      docker build --pull --rm -t $IMAGE_NAME .
       docker images
       
     onFailure:
@@ -88,4 +90,4 @@ outputArtifacts:
     type: DOCKER_IMAGE
     # this location tag doesn't effect the tag used to deliver the container image
     # to the Container Registry
-    location: new-generated-image
+    location: $IMAGE_NAME
