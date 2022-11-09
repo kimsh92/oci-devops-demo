@@ -1,0 +1,56 @@
+version: 0.1
+component: build
+timeoutInSeconds: 6000
+shell: bash
+env:
+  variables:
+    appName: "oci-devops-demo"
+
+  exportedVariables:
+    - APP_NAME
+    - OCIR_PATH
+    - TAG
+
+steps:
+  - type: Command
+    name: "Init exportedVariables"
+    timeoutInSeconds: 4000
+    command: |
+      APP_NAME=`grep '"name"' package.json | cut -d '"' -f 4 | head -n 1`
+
+  - type: Command
+    name: "Build Source"
+    timeoutInSeconds: 4000
+    failImmediatelyOnError: true
+    command: |
+      echo $PATH
+      mvn clean install
+
+  - type: Command
+    name: "Define Image Tag - Commit ID"
+    timeoutInSeconds: 30
+    command: |
+      COMMIT_ID=`echo ${OCI_TRIGGER_COMMIT_HASH} | cut -c 1-7`
+      BUILDRUN_HASH=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-7`
+      [ -z "$COMMIT_ID" ] && TAG=$BUILDRUN_HASH || TAG=$COMMIT_ID
+      echo "COMMIT ID: " $COMMIT_ID
+      echo "BUILDRUN_HASH: " $BUILDRUN_HASH
+
+  - type: Command
+    name: "Define OCIR Path"
+    timeoutInSeconds: 30
+    command: |
+      TENANCY_NAMESPACE=`oci os ns get --query data --raw-output`
+      REPO_NAME=$appName
+      OCIR_PATH=$OCI_RESOURCE_PRINCIPAL_REGION.ocir.io/$TENANCY_NAMESPACE/$REPO_NAME
+
+  - type: Command
+    name: "Check exportedVariables"
+    timeoutInSeconds: 30
+    command: |  
+      [ -z "$APP_NAME" ] && APP_NAME=unknown          
+      [ -z "$OCIR_PATH" ] && OCIR_PATH=unknown    
+      [ -z "$TAG" ] && TAG=unknown
+      echo "APP_NAME: " $APP_NAME      
+      echo "OCIR_PATH: " $OCIR_PATH
+      echo "TAG: " $TAG
