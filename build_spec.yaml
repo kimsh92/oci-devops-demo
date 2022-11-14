@@ -86,6 +86,7 @@ steps:
       echo "IMAGE_PATH: " $IMAGE_PATH
       echo "IMAGE_NAME: " $IMAGE_NAME
       echo "TAG: " $TAG
+      echo "VERSION: " $VERSION
 
 outputArtifacts:
   - name: devopsdemo-image
