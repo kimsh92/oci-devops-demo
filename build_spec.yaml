@@ -45,7 +45,7 @@ steps:
     command: |
       COMMIT_ID=`echo ${OCI_TRIGGER_COMMIT_HASH} | cut -c 1-7`
       BUILDRUN_HASH=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-7`
-      VERSION=BUILDRUN_HASH
+      VERSION=$BUILDRUN_HASH
       [ -z "$COMMIT_ID" ] && TAG=$BUILDRUN_HASH || TAG=$COMMIT_ID
       
       echo "COMMIT ID: " $COMMIT_ID
