@@ -10,6 +10,7 @@ env:
     - APP_NAME
     - OCIR_PATH
     - TAG
+    - VERSION
     - IMAGE_NAME
     - BUILD_RESULT
 
@@ -44,6 +45,7 @@ steps:
     command: |
       COMMIT_ID=`echo ${OCI_TRIGGER_COMMIT_HASH} | cut -c 1-7`
       BUILDRUN_HASH=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-7`
+      VERSION=BUILDRUN_HASH
       [ -z "$COMMIT_ID" ] && TAG=$BUILDRUN_HASH || TAG=$COMMIT_ID
       
       echo "COMMIT ID: " $COMMIT_ID
@@ -85,8 +87,12 @@ steps:
       echo "TAG: " $TAG
 
 outputArtifacts:
-  - name: output-image
+  - name: devopsdemo-image
     type: DOCKER_IMAGE
     # this location tag doesn't effect the tag used to deliver the container image
     # to the Container Registry
     location: devopsdemo-apps
+
+  - name: oke-devopsdemo-deployment
+    type: BINARY
+    location: ${OCI_PRIMARY_SOURCE_DIR}/oke-devopsdemo-deployment.yaml 
