@@ -8,10 +8,10 @@ env:
 
   exportedVariables:
     - APP_NAME
-    - OCIR_PATH
+    - IMAGE_NAME
+    - IMAGE_PATH
     - TAG
     - VERSION
-    - IMAGE_NAME
     - BUILD_RESULT
 
 steps:
@@ -57,7 +57,7 @@ steps:
     command: |
       TENANCY_NAMESPACE=`oci os ns get --query data --raw-output`
       REPO_NAME=$APP_NAME
-      OCIR_PATH=$OCI_RESOURCE_PRINCIPAL_REGION.ocir.io/$TENANCY_NAMESPACE/$REPO_NAME
+      IMAGE_PATH=$OCI_RESOURCE_PRINCIPAL_REGION.ocir.io/$TENANCY_NAMESPACE/$REPO_NAME
       
   - type: Command
     timeoutInSeconds: 400
@@ -80,10 +80,11 @@ steps:
     timeoutInSeconds: 30
     command: |  
       [ -z "$APP_NAME" ] && APP_NAME=unknown          
-      [ -z "$OCIR_PATH" ] && OCIR_PATH=unknown    
+      [ -z "$IMAGE_PATH" ] && IMAGE_PATH=unknown    
       [ -z "$TAG" ] && TAG=unknown
       echo "APP_NAME: " $APP_NAME      
-      echo "OCIR_PATH: " $OCIR_PATH
+      echo "IMAGE_PATH: " $IMAGE_PATH
+      echo "IMAGE_NAME: " $IMAGE_NAME
       echo "TAG: " $TAG
 
 outputArtifacts:
