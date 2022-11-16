@@ -4,10 +4,15 @@ metadata:
   name: ${APP_NAME}
   namespace: ${APP_NAME}
 spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1             # 새버전 배포시 POD 초과 초대개수
+      maxUnavailable: 25%     # 종료상태 POD 최대개수
   selector:
     matchLabels:
       app: ${APP_NAME}
-  replicas: 3
   template:
     metadata:
       labels:
