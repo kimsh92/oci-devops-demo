@@ -46,17 +46,3 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ${APP_NAME}-service
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 8080
-      protocol: TCP
-      targetPort: 80
-  selector:
-    app: ${APP_NAME}
