@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ocidevopsdemo
+  labels:
+    app: ocidevopsdemo
+  annotations:
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "50"
+    service.beta.kubernetes.io/oci-load-balancer-shape: 10Mbps
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  selector:
+    app: ocidevopsdemo
