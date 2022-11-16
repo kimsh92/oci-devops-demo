@@ -95,9 +95,9 @@ outputArtifacts:
     # to the Container Registry
     location: devopsdemo-apps
 
-  - name: oke-devopsdemo-deployment
-    type: BINARY
-    location: ${OCI_PRIMARY_SOURCE_DIR}/oke-devopsdemo-deployment.yaml
+#  - name: oke-devopsdemo-deployment
+#    type: BINARY
+#    location: ${OCI_PRIMARY_SOURCE_DIR}/oke-devopsdemo-deployment.yaml
     
   - name: oke-devopsdemo-trigger-deployment
     type: BINARY
