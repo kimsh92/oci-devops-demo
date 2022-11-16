@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ocidevopsdemo
+  labels:
+    app: ocidevopsdemo
+spec:
+  selector:
+    matchLabels:
+      app: ocidevopsdemo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ocidevopsdemo
+    spec:
+      containers:
+      - name: ocidevopsdemo
+        image: nrt.ocir.io/apackrsct01/oci-devops-demo:1.0
+        imagePullPolicy: Always
+        ports:
+        - name: ocidevopsdemo
+          containerPort: 8080
+          protocol: TCP
