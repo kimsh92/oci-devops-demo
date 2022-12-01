@@ -1,0 +1,58 @@
+version: 0.1
+component: build
+timeoutInSeconds: 6000
+shell: bash
+env:
+  variables:
+    appName: "ocidevopsdemo"
+
+  exportedVariables:
+    - APP_NAME
+    - IMAGE_NAME
+    - IMAGE_PATH
+    - TAG
+    - VERSION
+    - BUILD_RESULT
+
+steps:
+  - type: Command
+    name: "Init exportedVariables"
+    timeoutInSeconds: 4000
+    command: |
+      APP_NAME=$appName
+      BUILD_RESULT=TRUE
+      
+  - type: Command
+    name: "Build Source"
+    timeoutInSeconds: 10000
+    failImmediatelyOnError: true
+    command: |
+      echo $PATH
+      echo "=================== BUILD SOURCE ==================="
+      mvn clean package -Dmaven.test.skip
+      
+    onFailure:
+      - type: Command
+        timeoutInSeconds: 10000
+        runAs: root
+        command: |
+          echo "Handling Failure"
+          BUILD_RESULT=FAILURE
+          echo "Failure successfully handled"
+          
+  - type: Command
+    name: "Check exportedVariables"
+    timeoutInSeconds: 30
+    command: |  
+      [ -z "$APP_NAME" ] && APP_NAME=unknown          
+      [ -z "$IMAGE_PATH" ] && IMAGE_PATH=unknown    
+      [ -z "$TAG" ] && TAG=unknown
+      echo "APP_NAME: " $APP_NAME      
+      echo "IMAGE_PATH: " $IMAGE_PATH
+      echo "IMAGE_NAME: " $IMAGE_NAME
+      echo "TAG: " $TAG
+      echo "VERSION: " $VERSION
+outputArtifacts:
+  - name: devopsdemo-jar
+    type: BINARY
+    location: ${OCI_PRIMARY_SOURCE_DIR}/target/oci-devops-demo-1.0.jar
