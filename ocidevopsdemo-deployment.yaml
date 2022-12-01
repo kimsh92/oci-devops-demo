@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: ocidevopsdemo
-        image: nrt.ocir.io/apackrsct01/oci-devops-demo:1.0
+        image: nrt.ocir.io/apackrsct01/ocidevopsdemo:1.0
         imagePullPolicy: Always
         ports:
         - name: ocidevopsdemo
