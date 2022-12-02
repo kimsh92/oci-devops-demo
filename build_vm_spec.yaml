@@ -52,6 +52,7 @@ steps:
       echo "IMAGE_NAME: " $IMAGE_NAME
       echo "TAG: " $TAG
       echo "VERSION: " $VERSION
+      
 outputArtifacts:
   - name: devopsdemo-jar
     type: BINARY
